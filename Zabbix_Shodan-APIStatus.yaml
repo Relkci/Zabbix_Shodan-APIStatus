@@ -1,0 +1,167 @@
+zabbix_export:
+  version: '5.4'
+  date: '2021-10-05T04:35:51Z'
+  groups:
+    -
+      uuid: c1042abaca9d435ca00326c24768d8b8
+      name: 'API Providers'
+  templates:
+    -
+      uuid: 0dd18b2ed2e64e4bb4001a7478a4482b
+      template: 'Shodan API Provider'
+      name: 'Shodan API Provider'
+      groups:
+        -
+          name: 'API Providers'
+      items:
+        -
+          uuid: a6aa12ac3c1241a6897fe14142ce79a2
+          name: shodan.api.profile.data
+          type: HTTP_AGENT
+          key: shodan.api.profile.data
+          delay: 2m
+          history: 1h
+          trends: '0'
+          value_type: TEXT
+          url: 'https://api.shodan.io/account/profile'
+          query_fields:
+            -
+              name: key
+              value: '{$SHODANAPIKEY}'
+        -
+          uuid: b4fb172e32ab41e5b5b72e83f1b950d6
+          name: 'Shodan API - Credits Remaining'
+          type: DEPENDENT
+          key: shodan.api.profile.data.credits
+          delay: '0'
+          units: Credits
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.credits
+          master_item:
+            key: shodan.api.profile.data
+          triggers:
+            -
+              uuid: 1b65e6d7c01c4a24bce41734124bb051
+              expression: 'last(/Shodan API Provider/shodan.api.profile.data.credits)=0'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'last(/Shodan API Provider/shodan.api.profile.data.credits)>0'
+              name: 'Shodan API Status - Zero Credits Remaining'
+              opdata: '{ITEM.LASTVALUE1}'
+              priority: WARNING
+        -
+          uuid: d6baa5ee8061460bbad06f8ad773ffff
+          name: 'Shodan API Profile Display Name'
+          type: DEPENDENT
+          key: shodan.api.profile.data.displayname
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.display_name
+          master_item:
+            key: shodan.api.profile.data
+        -
+          uuid: bc1f074f9a294b9e99147ed05c26ab48
+          name: 'Shodan API Profile Member'
+          type: DEPENDENT
+          key: shodan.api.profile.data.member
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.member
+          master_item:
+            key: shodan.api.profile.data
+          triggers:
+            -
+              uuid: 6bee4198d6d64d22ae3aa1ca3e8663f0
+              expression: 'last(/Shodan API Provider/shodan.api.profile.data.member)="false"'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'last(/Shodan API Provider/shodan.api.profile.data.member)<>"false"'
+              name: 'Shodan API Status - Account is not a Shodan member'
+              opdata: '{ITEM.LASTVALUE1}'
+              priority: INFO
+              manual_close: 'YES'
+            -
+              uuid: cfe5c00f7c384f61b95be248c128a588
+              expression: 'change(/Shodan API Provider/shodan.api.profile.data.member)<>0'
+              name: 'Shodan API Status - Member Status Has Changed - {ITEM.LASTVALUE1}'
+              opdata: '{ITEM.LASTVALUE1}'
+              priority: WARNING
+              manual_close: 'YES'
+      macros:
+        -
+          macro: '{$SHODANAPIKEY}'
+          value: YOUR_API_KEY
+      dashboards:
+        -
+          uuid: 961c9436e67c4a81bc55dbeeb5f93111
+          name: 'Shodan API Provider'
+          pages:
+            -
+              widgets:
+                -
+                  type: PLAIN_TEXT
+                  name: 'Shodan API Data'
+                  'y': '5'
+                  width: '22'
+                  height: '3'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: style
+                      value: '1'
+                    -
+                      type: INTEGER
+                      name: show_lines
+                      value: '1'
+                    -
+                      type: ITEM
+                      name: itemids
+                      value:
+                        key: shodan.api.profile.data.credits
+                        host: 'Shodan API Provider'
+                    -
+                      type: ITEM
+                      name: itemids
+                      value:
+                        key: shodan.api.profile.data.displayname
+                        host: 'Shodan API Provider'
+                    -
+                      type: ITEM
+                      name: itemids
+                      value:
+                        key: shodan.api.profile.data.member
+                        host: 'Shodan API Provider'
+                -
+                  type: GRAPH_CLASSIC
+                  name: 'Shodan Credits Remaining'
+                  width: '12'
+                  height: '5'
+                  fields:
+                    -
+                      type: GRAPH
+                      name: graphid
+                      value:
+                        name: 'Shodan Credits Remaining'
+                        host: 'Shodan API Provider'
+  graphs:
+    -
+      uuid: 51cb61121294487298d9933d7bf64a91
+      name: 'Shodan Credits Remaining'
+      graph_items:
+        -
+          sortorder: '1'
+          color: 1A7C11
+          item:
+            host: 'Shodan API Provider'
+            key: shodan.api.profile.data.credits
