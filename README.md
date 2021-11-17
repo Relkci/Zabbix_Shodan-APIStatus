@@ -18,6 +18,37 @@ Zabbix Template for Shodan.io API account usage. Provides account info and API u
 - Change in account status
 - Account status is inactive
 
+## Macros
+- {$SHODANAPIKEY} (Your Shodan API Key)
+
+## Tags 
+- Application:API
+- API:Shodan
+- Application:Shodan
+- Shodan:data (API JSON Data Source)
+- Shodan:Used (Credits Used)
+- Shodan:Account (Account Information)
+
+## Screenshots
+
+Template Triggers
+![](images/screenshot1.png)
+
+Template Macros
+![](images/screenshot4.png)
+
+Dashboard - Credits Remaining
+![](images/screenshot2.png)
+
+Dashboard - Account Information
+![](images/screenshot3.png)
+
+## Known Issues
+- Credits Used is not available as an API endpoint.  I will, at some point use a calculated item to generate this without the API endpoint.
+
+## Updates
+- Nov 17 2021 - Added tags, added export format
+
 ## Contact
 Twitter: @KRelkci
 GitHub: @Relkci

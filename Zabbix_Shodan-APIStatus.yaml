@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2021-10-05T04:35:51Z'
+  date: '2021-11-17T22:47:30Z'
   groups:
     -
       uuid: c1042abaca9d435ca00326c24768d8b8
@@ -28,6 +28,13 @@ zabbix_export:
             -
               name: key
               value: '{$SHODANAPIKEY}'
+          tags:
+            -
+              tag: Application
+              value: Shodan
+            -
+              tag: Shodan
+              value: Data
         -
           uuid: b4fb172e32ab41e5b5b72e83f1b950d6
           name: 'Shodan API - Credits Remaining'
@@ -42,6 +49,16 @@ zabbix_export:
                 - $.credits
           master_item:
             key: shodan.api.profile.data
+          tags:
+            -
+              tag: API_Credits
+              value: Remaining
+            -
+              tag: Application
+              value: Shodan
+            -
+              tag: Shodan
+              value: Used
           triggers:
             -
               uuid: 1b65e6d7c01c4a24bce41734124bb051
@@ -66,6 +83,13 @@ zabbix_export:
                 - $.display_name
           master_item:
             key: shodan.api.profile.data
+          tags:
+            -
+              tag: Application
+              value: Shodan
+            -
+              tag: Shodan
+              value: Account
         -
           uuid: bc1f074f9a294b9e99147ed05c26ab48
           name: 'Shodan API Profile Member'
@@ -81,6 +105,13 @@ zabbix_export:
                 - $.member
           master_item:
             key: shodan.api.profile.data
+          tags:
+            -
+              tag: Application
+              value: Shodan
+            -
+              tag: Shodan
+              value: Account
           triggers:
             -
               uuid: 6bee4198d6d64d22ae3aa1ca3e8663f0
@@ -98,10 +129,21 @@ zabbix_export:
               opdata: '{ITEM.LASTVALUE1}'
               priority: WARNING
               manual_close: 'YES'
+      tags:
+        -
+          tag: API
+          value: Shodan
+        -
+          tag: Application
+          value: API
+        -
+          tag: Application
+          value: Shodan
       macros:
         -
           macro: '{$SHODANAPIKEY}'
           value: YOUR_API_KEY
+          description: 'Your Shodan.IO API Key'
       dashboards:
         -
           uuid: 961c9436e67c4a81bc55dbeeb5f93111

@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zabbix_export>
+	<version>5.4</version>
+	<date>2021-11-17T22:47:59Z</date>
+	<groups>
+		<group>
+			<uuid>c1042abaca9d435ca00326c24768d8b8</uuid>
+			<name>API Providers</name>
+		</group>
+	</groups>
+	<templates>
+		<template>
+			<uuid>0dd18b2ed2e64e4bb4001a7478a4482b</uuid>
+			<template>Shodan API Provider</template>
+			<name>Shodan API Provider</name>
+			<groups>
+				<group>
+					<name>API Providers</name>
+				</group>
+			</groups>
+			<items>
+				<item>
+					<uuid>a6aa12ac3c1241a6897fe14142ce79a2</uuid>
+					<name>shodan.api.profile.data</name>
+					<type>HTTP_AGENT</type>
+					<key>shodan.api.profile.data</key>
+					<delay>2m</delay>
+					<history>1h</history>
+					<trends>0</trends>
+					<value_type>TEXT</value_type>
+					<url>https://api.shodan.io/account/profile</url>
+					<query_fields>
+						<query_field>
+							<name>key</name>
+							<value>{$SHODANAPIKEY}</value>
+						</query_field>
+					</query_fields>
+					<tags>
+						<tag>
+							<tag>Application</tag>
+							<value>Shodan</value>
+						</tag>
+						<tag>
+							<tag>Shodan</tag>
+							<value>Data</value>
+						</tag>
+					</tags>
+				</item>
+				<item>
+					<uuid>b4fb172e32ab41e5b5b72e83f1b950d6</uuid>
+					<name>Shodan API - Credits Remaining</name>
+					<type>DEPENDENT</type>
+					<key>shodan.api.profile.data.credits</key>
+					<delay>0</delay>
+					<units>Credits</units>
+					<preprocessing>
+						<step>
+							<type>JSONPATH</type>
+							<parameters>
+								<parameter>$.credits</parameter>
+							</parameters>
+						</step>
+					</preprocessing>
+					<master_item>
+						<key>shodan.api.profile.data</key>
+					</master_item>
+					<tags>
+						<tag>
+							<tag>API_Credits</tag>
+							<value>Remaining</value>
+						</tag>
+						<tag>
+							<tag>Application</tag>
+							<value>Shodan</value>
+						</tag>
+						<tag>
+							<tag>Shodan</tag>
+							<value>Used</value>
+						</tag>
+					</tags>
+					<triggers>
+						<trigger>
+							<uuid>1b65e6d7c01c4a24bce41734124bb051</uuid>
+							<expression>last(/Shodan API Provider/shodan.api.profile.data.credits)=0</expression>
+							<recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+							<recovery_expression>last(/Shodan API Provider/shodan.api.profile.data.credits)&gt;0</recovery_expression>
+							<name>Shodan API Status - Zero Credits Remaining</name>
+							<opdata>{ITEM.LASTVALUE1}</opdata>
+							<priority>WARNING</priority>
+						</trigger>
+					</triggers>
+				</item>
+				<item>
+					<uuid>d6baa5ee8061460bbad06f8ad773ffff</uuid>
+					<name>Shodan API Profile Display Name</name>
+					<type>DEPENDENT</type>
+					<key>shodan.api.profile.data.displayname</key>
+					<delay>0</delay>
+					<trends>0</trends>
+					<value_type>TEXT</value_type>
+					<preprocessing>
+						<step>
+							<type>JSONPATH</type>
+							<parameters>
+								<parameter>$.display_name</parameter>
+							</parameters>
+						</step>
+					</preprocessing>
+					<master_item>
+						<key>shodan.api.profile.data</key>
+					</master_item>
+					<tags>
+						<tag>
+							<tag>Application</tag>
+							<value>Shodan</value>
+						</tag>
+						<tag>
+							<tag>Shodan</tag>
+							<value>Account</value>
+						</tag>
+					</tags>
+				</item>
+				<item>
+					<uuid>bc1f074f9a294b9e99147ed05c26ab48</uuid>
+					<name>Shodan API Profile Member</name>
+					<type>DEPENDENT</type>
+					<key>shodan.api.profile.data.member</key>
+					<delay>0</delay>
+					<trends>0</trends>
+					<value_type>TEXT</value_type>
+					<preprocessing>
+						<step>
+							<type>JSONPATH</type>
+							<parameters>
+								<parameter>$.member</parameter>
+							</parameters>
+						</step>
+					</preprocessing>
+					<master_item>
+						<key>shodan.api.profile.data</key>
+					</master_item>
+					<tags>
+						<tag>
+							<tag>Application</tag>
+							<value>Shodan</value>
+						</tag>
+						<tag>
+							<tag>Shodan</tag>
+							<value>Account</value>
+						</tag>
+					</tags>
+					<triggers>
+						<trigger>
+							<uuid>6bee4198d6d64d22ae3aa1ca3e8663f0</uuid>
+							<expression>last(/Shodan API Provider/shodan.api.profile.data.member)=&quot;false&quot;</expression>
+							<recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+							<recovery_expression>last(/Shodan API Provider/shodan.api.profile.data.member)&lt;&gt;&quot;false&quot;</recovery_expression>
+							<name>Shodan API Status - Account is not a Shodan member</name>
+							<opdata>{ITEM.LASTVALUE1}</opdata>
+							<priority>INFO</priority>
+							<manual_close>YES</manual_close>
+						</trigger>
+						<trigger>
+							<uuid>cfe5c00f7c384f61b95be248c128a588</uuid>
+							<expression>change(/Shodan API Provider/shodan.api.profile.data.member)&lt;&gt;0</expression>
+							<name>Shodan API Status - Member Status Has Changed - {ITEM.LASTVALUE1}</name>
+							<opdata>{ITEM.LASTVALUE1}</opdata>
+							<priority>WARNING</priority>
+							<manual_close>YES</manual_close>
+						</trigger>
+					</triggers>
+				</item>
+			</items>
+			<tags>
+				<tag>
+					<tag>API</tag>
+					<value>Shodan</value>
+				</tag>
+				<tag>
+					<tag>Application</tag>
+					<value>API</value>
+				</tag>
+				<tag>
+					<tag>Application</tag>
+					<value>Shodan</value>
+				</tag>
+			</tags>
+			<macros>
+				<macro>
+					<macro>{$SHODANAPIKEY}</macro>
+					<value>YOUR_API_KEY</value>
+					<description>Your Shodan.IO API Key</description>
+				</macro>
+			</macros>
+			<dashboards>
+				<dashboard>
+					<uuid>961c9436e67c4a81bc55dbeeb5f93111</uuid>
+					<name>Shodan API Provider</name>
+					<pages>
+						<page>
+							<widgets>
+								<widget>
+									<type>PLAIN_TEXT</type>
+									<name>Shodan API Data</name>
+									<y>5</y>
+									<width>22</width>
+									<height>3</height>
+									<fields>
+										<field>
+											<type>INTEGER</type>
+											<name>style</name>
+											<value>1</value>
+										</field>
+										<field>
+											<type>INTEGER</type>
+											<name>show_lines</name>
+											<value>1</value>
+										</field>
+										<field>
+											<type>ITEM</type>
+											<name>itemids</name>
+											<value>
+												<key>shodan.api.profile.data.credits</key>
+												<host>Shodan API Provider</host>
+											</value>
+										</field>
+										<field>
+											<type>ITEM</type>
+											<name>itemids</name>
+											<value>
+												<key>shodan.api.profile.data.displayname</key>
+												<host>Shodan API Provider</host>
+											</value>
+										</field>
+										<field>
+											<type>ITEM</type>
+											<name>itemids</name>
+											<value>
+												<key>shodan.api.profile.data.member</key>
+												<host>Shodan API Provider</host>
+											</value>
+										</field>
+									</fields>
+								</widget>
+								<widget>
+									<type>GRAPH_CLASSIC</type>
+									<name>Shodan Credits Remaining</name>
+									<width>12</width>
+									<height>5</height>
+									<fields>
+										<field>
+											<type>GRAPH</type>
+											<name>graphid</name>
+											<value>
+												<name>Shodan Credits Remaining</name>
+												<host>Shodan API Provider</host>
+											</value>
+										</field>
+									</fields>
+								</widget>
+							</widgets>
+						</page>
+					</pages>
+				</dashboard>
+			</dashboards>
+		</template>
+	</templates>
+	<graphs>
+		<graph>
+			<uuid>51cb61121294487298d9933d7bf64a91</uuid>
+			<name>Shodan Credits Remaining</name>
+			<graph_items>
+				<graph_item>
+					<sortorder>1</sortorder>
+					<color>1A7C11</color>
+					<item>
+						<host>Shodan API Provider</host>
+						<key>shodan.api.profile.data.credits</key>
+					</item>
+				</graph_item>
+			</graph_items>
+		</graph>
+	</graphs>
+</zabbix_export>
